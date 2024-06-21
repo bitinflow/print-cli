@@ -1,0 +1,6 @@
+base_url: 'https://bitinflow.events'
+printers:
+  - id: 9c551267-ccdf-42af-92fa-87576416d0ad
+    name: EPSON ET 2750
+    driver: cups
+    address: "ipp://127.0.0.1:631/printers/EPSON_ET_2750_Series_USB"
