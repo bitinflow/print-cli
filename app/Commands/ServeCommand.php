@@ -28,7 +28,7 @@ class ServeCommand extends Command
      * Execute the console command.
      * @throws RequestException
      */
-    public function handle()
+    public function handle(): void
     {
         $this->info('Starting service...');
 
