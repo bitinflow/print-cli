@@ -2,6 +2,7 @@
 
 namespace App\Commands;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -35,16 +36,33 @@ class ServeCommand extends Command
 
     /**
      * Execute the console command.
-     * @throws RequestException
      */
     public function handle(): void
+    {
+        try {
+            $this->serve();
+        } catch (Throwable $e) {
+            if ($e instanceof RequestException && $e->response->status() === 422) {
+                $this->error('Please check your configuration and try again.');
+                $this->error($e->response->json()['message']);
+            } else {
+                $this->error($e->getMessage());
+            }
+        }
+    }
+
+    /**
+     * @throws RequestException
+     * @throws ConnectionException
+     */
+    private function serve(): void
     {
         $this->info('Starting service...');
 
         $yaml = $this->getConfiguration();
         $printerIds = array_map(fn($printer) => $printer['id'], $yaml['printers']);
 
-        $response = Http::patch(sprintf('%s/api/printers/register', $yaml['base_url']), [
+        $response = Http::acceptJson()->patch(sprintf('%s/api/printers/register', $yaml['base_url']), [
             'printers' => $yaml['printers'],
         ]);
 
@@ -54,7 +72,7 @@ class ServeCommand extends Command
 
         do {
             try {
-                $response = Http::get(sprintf('%s/api/printers/jobs', $yaml['base_url']), [
+                $response = Http::acceptJson()->get(sprintf('%s/api/printers/jobs', $yaml['base_url']), [
                     'printer_ids' => $printerIds,
                 ]);
 
@@ -98,6 +116,7 @@ class ServeCommand extends Command
 
     /**
      * @throws RequestException
+     * @throws ConnectionException
      */
     private function handleJob(array $job, mixed $yaml): void
     {
@@ -150,10 +169,11 @@ class ServeCommand extends Command
 
     /**
      * @throws RequestException
+     * @throws ConnectionException
      */
     private function markCompleted(array $job, mixed $yaml, int $jobId): void
     {
-        $response = Http::patch(sprintf('%s/api/printers/jobs/%s/complete', $yaml['base_url'], $job['id']), [
+        $response = Http::acceptJson()->patch(sprintf('%s/api/printers/jobs/%s/complete', $yaml['base_url'], $job['id']), [
             'job_id' => $jobId,
         ]);
         $response->throw();
@@ -161,10 +181,11 @@ class ServeCommand extends Command
 
     /**
      * @throws RequestException
+     * @throws ConnectionException
      */
     private function markFailed(array $job, mixed $yaml, string $reason): void
     {
-        $response = Http::patch(sprintf('%s/api/printers/jobs/%s/fail', $yaml['base_url'], $job['id']), [
+        $response = Http::acceptJson()->patch(sprintf('%s/api/printers/jobs/%s/fail', $yaml['base_url'], $job['id']), [
             'reason' => $reason,
         ]);
         $response->throw();
