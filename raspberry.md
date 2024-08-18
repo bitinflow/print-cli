@@ -93,12 +93,11 @@ using a different user, make sure to replace `print-cli` with the correct userna
 
 Next create a configuration file `~/print-cli.yml`, and add the following content:
 
-> Make sure to replace the `license_key`, `your-printer-uuid`, `address`, `username`, and `password` with your own
+> Make sure to replace the `your-printer-uuid`, `address`, `username`, and `password` with your own
 > values. Also make sure to replace the `base_url` with the correct URL to our events platform.
 
 ```yaml
 base_url: 'https://events.anikeen.com'
-license_key: 'your-license-key'
 printers:
   - id: 'your-printer-uuid'
     name: EPSON ET 2750
