@@ -20,7 +20,7 @@
         "guzzlehttp/guzzle": "^7.8",
         "illuminate/http": "^11.5",
         "laravel-zero/framework": "^11.0.0",
-        "smalot/cups-ipp": "dev-master",
+        "ghostzero/cups-ipp": "^1.0",
         "symfony/yaml": "^7.1"
     },
     "require-dev": {
@@ -28,12 +28,6 @@
         "mockery/mockery": "^1.6.11",
         "pestphp/pest": "^2.34.7"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/ghostzero/cups-ipp.git"
-        }
-    ],
     "autoload": {
         "psr-4": {
             "App\\": "app/",
