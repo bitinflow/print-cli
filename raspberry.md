@@ -65,7 +65,7 @@ https://10.20.0.195:631/printers/EPSON_ET_2720_Series
 ```
 
 It contains the Name of the printer, which is the `printer-name` part. You can use this address in the configuration
-file for Print-CLI. In most cases, just replace the `https` with `ipp` and remove the `/printers` part:
+file for Print-CLI. In most cases, just replace the `https` with `ipp` and replace the ip to `127.0.0.1`:
 
 ```text
 ipp://127.0.0.1:631/printers/EPSON_ET_2720_Series
