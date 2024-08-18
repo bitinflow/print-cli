@@ -92,7 +92,7 @@ class ServeCommand extends Command
     private function getConfiguration(): array
     {
         $this->info('Reading configuration...');
-        $yaml = file_get_contents(base_path('print-cli.yml'));
+        $yaml = file_get_contents(getcwd() . '/print-cli.yml');
         return Yaml::parse($yaml);
     }
 
