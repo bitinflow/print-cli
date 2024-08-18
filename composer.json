@@ -1,7 +1,7 @@
 {
-    "name": "laravel-zero/laravel-zero",
-    "description": "The Laravel Zero Framework.",
-    "keywords": ["framework", "laravel", "laravel zero", "console", "cli"],
+    "name": "anikeen/print-cli",
+    "description": "Official Print CLI for Anikeen Events",
+    "keywords": [],
     "homepage": "https://laravel-zero.com",
     "type": "project",
     "license": "MIT",
