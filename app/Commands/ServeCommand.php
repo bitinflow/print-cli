@@ -85,6 +85,7 @@ class ServeCommand extends Command
                 $jobs = $response->json();
 
                 if (empty($jobs)) {
+                    sleep(2);
                     continue;
                 }
 
