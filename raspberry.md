@@ -160,3 +160,7 @@ Driver:	Epson Expression ET-2750 EcoTank - CUPS+Gutenprint v5.3.3 (color)
 ```bash
 sudo apt install printer-driver-gutenprint
 ```
+
+## WLAN
+
+https://www.makeuseof.com/connect-to-wifi-with-nmcli/
