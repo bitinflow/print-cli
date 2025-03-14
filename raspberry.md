@@ -149,3 +149,14 @@ sudo supervisorctl reread
 sudo supervisorctl update
 sudo supervisorctl start print-cli
 ```
+
+# Troubeshooting
+
+## Orange PI 5 Plus Driver 
+
+### EPSON ET 2750
+Driver:	Epson Expression ET-2750 EcoTank - CUPS+Gutenprint v5.3.3 (color)
+
+```bash
+sudo apt install printer-driver-gutenprint
+```
