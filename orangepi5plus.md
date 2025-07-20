@@ -19,6 +19,7 @@ Recommended configuration:
 
 **Tested Printers:**
 
+- EPSON ET-2750 Series with driver: Epson Expression ET-2750 EcoTank - CUPS+Gutenprint v5.3.3 (color)
 - EPSON ET-2860 Series with driver: Epson Expression ET-2750 EcoTank - CUPS+Gutenprint v5.3.3 (color)
 
 Next, we need to install the required packages for Print-CLI to work. Run the following commands and grab a coffee while
@@ -102,23 +103,10 @@ composer global require anikeen/print-cli
 
 ## Step 5: Configure Print-CLI
 
-In this tutorial, we're using the home directory of the `print-cli` user to store the configuration file. If you're
-using a different user, make sure to replace `print-cli` with the correct username.
+With the latest version, you can automatically create your `/home/orangepi/print-cli.yml` with:
 
-Next create a configuration file `~/print-cli.yml`, and add the following content:
-
-> Make sure to replace the `your-printer-uuid`, `address`, `username`, and `password` with your own
-> values. Also make sure to replace the `base_url` with the correct URL to our events platform.
-
-```yaml
-base_url: 'https://events.anikeen.com'
-printers:
-  - id: 'your-printer-uuid'
-    name: EPSON ET 2750
-    driver: cups
-    address: 'ipp://127.0.0.1:631/printers/EPSON_ET_2720_Series'
-    username: 'orangepi'
-    password: 'orangepi'
+```bash
+print-cli init
 ```
 
 To test the configuration, run the following command:
@@ -144,16 +132,8 @@ and control a number of processes on UNIX-like operating systems.
 
 Create a new configuration file `/etc/supervisor/conf.d/print-cli.conf`:
 
-```ini
-[program:print-cli]
-directory = /home/orangepi
-command = /usr/bin/php /home/orangepi/.config/composer/vendor/bin/print-cli serve
-autostart = true
-autorestart = true
-stderr_logfile = /var/log/print-cli.err.log
-stdout_logfile = /var/log/print-cli.out.log
-stopwaitsecs = 3600
-user = print-cli
+```bash
+print-cli init:supervisor | sudo tee /etc/supervisor/conf.d/print-cli.conf > /dev/null
 ```
 
 Now, update Supervisor to read the new configuration file and start the Print-CLI service:
@@ -167,3 +147,33 @@ sudo supervisorctl start print-cli
 ## WLAN
 
 https://www.makeuseof.com/connect-to-wifi-with-nmcli/
+
+## Printer Offsets
+
+### EPSON ET-2750 Series (with Gutenprint @ OrangePI)
+
+> Some other OS and drivers need other offsets.
+
+```json
+{
+    "badge": {
+        "offset": {
+            "y": 0,
+            "x": 0
+        }
+    }
+}
+```
+
+### EPSON ET-2860 Series (Unconfirmed)
+
+```json
+{
+    "badge": {
+        "offset": {
+            "y": 0,
+            "x": 0
+        }
+    }
+}
+```

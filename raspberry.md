@@ -88,23 +88,10 @@ composer global require anikeen/print-cli
 
 ## Step 5: Configure Print-CLI
 
-In this tutorial, we're using the home directory of the `print-cli` user to store the configuration file. If you're
-using a different user, make sure to replace `print-cli` with the correct username.
+With the latest version, you can automatically create your `/home/print-cli/print-cli.yml` with:
 
-Next create a configuration file `~/print-cli.yml`, and add the following content:
-
-> Make sure to replace the `your-printer-uuid`, `address`, `username`, and `password` with your own
-> values. Also make sure to replace the `base_url` with the correct URL to our events platform.
-
-```yaml
-base_url: 'https://events.anikeen.com'
-printers:
-  - id: 'your-printer-uuid'
-    name: EPSON ET 2750
-    driver: cups
-    address: 'ipp://127.0.0.1:631/printers/EPSON_ET_2720_Series'
-    username: 'print-cli'
-    password: 'password'
+```bash
+print-cli init
 ```
 
 To test the configuration, run the following command:
@@ -130,16 +117,8 @@ and control a number of processes on UNIX-like operating systems.
 
 Create a new configuration file `/etc/supervisor/conf.d/print-cli.conf`:
 
-```ini
-[program:print-cli]
-directory = /home/print-cli
-command = /usr/bin/php /home/print-cli/.config/composer/vendor/bin/print-cli serve
-autostart = true
-autorestart = true
-stderr_logfile = /var/log/print-cli.err.log
-stdout_logfile = /var/log/print-cli.out.log
-stopwaitsecs = 3600
-user = print-cli
+```bash
+print-cli init:supervisor | sudo tee /etc/supervisor/conf.d/print-cli.conf > /dev/null
 ```
 
 Now, update Supervisor to read the new configuration file and start the Print-CLI service:
