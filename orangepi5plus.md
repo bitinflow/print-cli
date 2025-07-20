@@ -165,13 +165,13 @@ https://www.makeuseof.com/connect-to-wifi-with-nmcli/
 }
 ```
 
-### EPSON ET-2860 Series (Unconfirmed)
+### EPSON ET-2860 Series (with Gutenprint @ OrangePI)
 
 ```json
 {
     "badge": {
         "offset": {
-            "y": 0,
+            "y": -80,
             "x": 0
         }
     }
