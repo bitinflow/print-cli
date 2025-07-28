@@ -17,14 +17,30 @@ Recommended configuration:
 
 ## Step 2: Install Required Packages
 
+**Tested Printers:**
+
+- EPSON ET-2750 Series with driver: Epson Expression ET-2750 EcoTank - CUPS+Gutenprint v5.3.3 (color)
+- EPSON ET-2860 Series with driver: Epson Expression ET-2750 EcoTank - CUPS+Gutenprint v5.3.3 (color)
+
 Next, we need to install the required packages for Print-CLI to work. Run the following commands and grab a coffee while
 the packages are being installed (it may take a while):
 
 ```bash
 sudo apt-get update
+sudo apt-get upgrade -y
 sudo add-apt-repository ppa:ondrej/php
 sudo apt-get install -y git cups zip unzip supervisor \
-  composer php-zip php-curl php-xml php-mbstring
+  php-cli php-zip php-curl php-xml php-mbstring \
+  printer-driver-gutenprint
+```
+
+Install Composer as usual:
+
+```
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php composer-setup.php
+php -r "unlink('composer-setup.php');"
+sudo mv composer.phar /usr/local/bin/composer
 ```
 
 Finally, add the Composer bin directory to your PATH, so you can run the `print-cli` command from anywhere:
@@ -103,7 +119,7 @@ print-cli serve
 If everything is configured correctly, you should see the following output:
 
 ```text
-Starting service...
+Starting service...    
 Reading configuration...
 Service started!
 ```
@@ -130,15 +146,6 @@ sudo supervisorctl start print-cli
 ```
 
 # Troubeshooting
-
-## Orange PI 5 Plus Driver 
-
-### EPSON ET 2750
-Driver:	Epson Expression ET-2750 EcoTank - CUPS+Gutenprint v5.3.3 (color)
-
-```bash
-sudo apt install printer-driver-gutenprint
-```
 
 ## WLAN
 
