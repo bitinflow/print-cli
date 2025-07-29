@@ -1,0 +1,40 @@
+#!/bin/sh
+
+# Prevent running as root
+if [ "$EUID" -eq 0 ]; then
+  echo "This script must NOT be run as root or with sudo. Please run as a normal user."
+  exit 1
+fi
+
+# Stage 1: Install dependencies
+sudo apt-get update
+sudo apt-get upgrade -y
+sudo add-apt-repository -y ppa:ondrej/php
+sudo apt-get install -y git cups zip unzip supervisor \
+  php-cli php-zip php-curl php-xml php-mbstring \
+  printer-driver-gutenprint
+
+# Stage 2: Install Composer
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php composer-setup.php
+php -r "unlink('composer-setup.php');"
+sudo mv composer.phar /usr/local/bin/composer
+
+# Stage 3: Setup Composer global vendor bin directory
+COMPOSER_BIN_DIR='export PATH="$PATH:$HOME/.config/composer/vendor/bin"'
+grep -qxF "$COMPOSER_BIN_DIR" ~/.bashrc || echo "$COMPOSER_BIN_DIR" >> ~/.bashrc
+
+# Stage 4: Configure CUPS server
+sudo cupsctl --remote-admin --remote-any
+sudo usermod -aG lpadmin "$USER"
+sudo /etc/init.d/cups restart
+
+# Stage 5: Install Print CLI application
+composer global require anikeen/print-cli
+print-cli init --no-interaction
+print-cli init:supervisor | sudo tee /etc/supervisor/conf.d/print-cli.conf > /dev/null
+
+# Stage 6: Start Supervisor service
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl restart print-cli

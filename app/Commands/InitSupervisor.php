@@ -4,7 +4,7 @@ namespace App\Commands;
 
 use LaravelZero\Framework\Commands\Command;
 
-class InitSupervisorCommand extends Command
+class InitSupervisor extends Command
 {
     /**
      * The name and signature of the console command.
@@ -34,8 +34,8 @@ directory = $home
 command = /usr/bin/php $home/.config/composer/vendor/bin/print-cli serve
 autostart = true
 autorestart = true
-stderr_logfile = /var/log/print-cli.err.log
-stdout_logfile = /var/log/print-cli.out.log
+redirect_stderr = true
+stdout_logfile = /var/log/print-cli.log
 stopwaitsecs = 3600
 user = $username
 INI;

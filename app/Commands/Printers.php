@@ -2,13 +2,10 @@
 
 namespace App\Commands;
 
+use App\Support\PrinterManager;
 use LaravelZero\Framework\Commands\Command;
-use Smalot\Cups\Builder\Builder;
-use Smalot\Cups\Manager\PrinterManager;
-use Smalot\Cups\Transport\Client;
-use Smalot\Cups\Transport\ResponseParser;
 
-class ListCommand extends Command
+class Printers extends Command
 {
     /**
      * The name and signature of the console command.
@@ -26,20 +23,17 @@ class ListCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle(): int
+    public function handle(PrinterManager $printers): int
     {
-        $client = new Client();
-        $builder = new Builder();
-        $responseParser = new ResponseParser();
+        $printers = $printers->getList();
 
-        $printerManager = new PrinterManager($builder, $client, $responseParser);
+        if ($printers->isEmpty()) {
+            $this->error('We could not find any printers! Please register them first in CUPS.');
+            return 1;
+        }
 
-        $printers = $printerManager->getList();
-
-        $this->info('Printers:');
+        $this->info('Printer:');
 
         foreach ($printers as $printer) {
             $this->info($printer->getName());

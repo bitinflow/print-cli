@@ -21,7 +21,8 @@
         "illuminate/http": "^11.5",
         "laravel-zero/framework": "^11.0.0",
         "ghostzero/cups-ipp": "^1.0",
-        "symfony/yaml": "^7.1"
+        "symfony/yaml": "^7.1",
+        "ext-posix": "*"
     },
     "require-dev": {
         "laravel/pint": "^1.15.2",
