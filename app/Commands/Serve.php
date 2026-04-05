@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LaravelZero\Framework\Commands\Command;
+use Nyra\EscPos\JobRunner;
+use Nyra\EscPos\Printer;
 use Smalot\Cups\Builder\Builder;
 use Smalot\Cups\Manager\JobManager;
 use Smalot\Cups\Manager\PrinterManager;
@@ -36,7 +38,7 @@ class Serve extends Command
      */
     protected $description = 'Command description';
 
-    private $counter = 0;
+    private int $counter = 0;
 
     /**
      * Execute the console command.
@@ -108,7 +110,13 @@ class Serve extends Command
 
         foreach ($jobs as $job) {
             try {
-                $this->handleJob($config, $job);
+                /** @var array $printer */
+                $printer = $config->getPrinters()->firstWhere('id', $job['printer_id']);
+                match ($printer['driver']) {
+                    'cups' => $this->handleCupsJob($config, $job, $printer),
+                    'escpos' => $this->handleEscposJob($config, $job, $printer),
+                    default => $this->error(sprintf('Unsupported driver %s for job %s', $job['driver'], $job['id'])),
+                };
             } catch (Throwable $e) {
                 $this->error($e->getMessage());
             }
@@ -119,9 +127,8 @@ class Serve extends Command
      * @throws RequestException
      * @throws ConnectionException
      */
-    private function handleJob(Config $config, array $job): void
+    private function handleCupsJob(Config $config, array $job, array $printer): void
     {
-        $printer = $config->getPrinters()->firstWhere('id', $job['printer_id']);
         [$username, $password] = $this->getConfig()->getPrinterCredentials($printer);
 
         if (!empty($job['data']['preview'])) {
@@ -149,14 +156,14 @@ class Serve extends Command
         $jobManager = new JobManager($builder, $client, $responseParser);
 
         $content = file_get_contents($job['file_url']);
-        Storage::put($filename = sprintf('pdfs/%s.pdf', Str::random(16)), $content);
+        Storage::put($filename = sprintf('pdfs/%s.pdf', Str::random()), $content);
 
         $printerJob = new Job();
         $printerJob->setName(sprintf('job-%s', $job['id']));
         $printerJob->setCopies(1);
         $printerJob->setPageRanges('1');
         $printerJob->addFile(Storage::path($filename));
-        $printerJob->addAttribute('media', "Custom.{$pointWidth}x{$pointHeight}");
+        $printerJob->addAttribute('media', "Custom.{$pointWidth}x$pointHeight");
         $printerJob->addAttribute('fit-to-page', true);
 
         if (!$jobManager->send($printer, $printerJob)) {
@@ -168,6 +175,30 @@ class Serve extends Command
         $this->markCompleted($config, $job, $printerJob->getId());
 
         $this->info(sprintf('Job %s completed as %s', $job['id'], $printerJob->getId()));
+    }
+
+    /**
+     * @throws RequestException
+     * @throws ConnectionException
+     */
+    private function handleEscposJob(Config $config, array $job, array $printer): void
+    {
+        try {
+            $uri = parse_url($printer['uri']);
+            $host = $uri['host'] ?? 'localhost';
+            $post = $uri['port'] ?? 9100;
+            $printer = (new Printer($host, $post, 48))->connect();
+
+            $runner = new JobRunner();
+            $content = file_get_contents($job['file_url']);
+            $runner->run($printer, $content);
+
+            $this->markCompleted($config, $job, 0);
+            $this->info(sprintf('ESC/POS job %s completed', $job['id']));
+        } catch (Throwable $e) {
+            $this->markFailed($config, $job, 'Failed to print ESC/POS job: ' . $e->getMessage());
+            $this->error(sprintf('Failed to print ESC/POS job %s: %s', $job['id'], $e->getMessage()));
+        }
     }
 
     /**

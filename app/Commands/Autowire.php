@@ -64,6 +64,13 @@ class Autowire extends Command
 
             if ($response->successful()) {
                 $newPrinters = $response->json('printers', []);
+                // Keep all escpos printers from the old config
+                $existingPrinters = $contig->get('printers', []);
+                $escposPrinters = array_filter($existingPrinters, function ($printer) {
+                    return isset($printer['driver']) && strtolower($printer['driver']) === 'escpos';
+                });
+                // Merge escpos printers with new printers, allow duplicates
+                $allPrinters = array_merge($newPrinters, $escposPrinters);
                 if (empty($newPrinters)) {
                     $this->info('No new printers found to autowire.');
                 } else {
@@ -73,7 +80,7 @@ class Autowire extends Command
                 }
                 $this->setConfig([
                     ...$contig->toArray(),
-                    'printers' => $newPrinters,
+                    'printers' => $allPrinters,
                 ]);
             } else {
                 throw new Exception('Failed to autowire printers: ' . $response->body());

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "36c4d46c04feaba7c665341994dbc8cb",
+    "content-hash": "e9b2399bae4e78613e1d65e4756bc174",
     "packages": [
         {
             "name": "brick/math",
@@ -3126,6 +3126,46 @@
                 }
             ],
             "time": "2024-09-09T07:06:30+00:00"
+        },
+        {
+            "name": "nyra/escpos",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nyra-dev/escpos.git",
+                "reference": "97a01457cec80eb57e9d31662f3a94d35c2d0a94"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nyra-dev/escpos/zipball/97a01457cec80eb57e9d31662f3a94d35c2d0a94",
+                "reference": "97a01457cec80eb57e9d31662f3a94d35c2d0a94",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Nyra\\EscPos\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "René Preuß",
+                    "email": "rene@preuss.io"
+                }
+            ],
+            "description": "Print Drivers for ESC/POS",
+            "support": {
+                "issues": "https://github.com/nyra-dev/escpos/issues",
+                "source": "https://github.com/nyra-dev/escpos/tree/1.0.0"
+            },
+            "time": "2026-04-05T12:22:00+00:00"
         },
         {
             "name": "php-http/client-common",
@@ -8956,7 +8996,8 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.2.0"
+        "php": "^8.2.0",
+        "ext-posix": "*"
     },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"
